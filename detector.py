@@ -1,0 +1,60 @@
+import streamlit as st
+import numpy as np
+from PIL import Image
+from tensorflow.keras.preprocessing import image
+from tensorflow.keras.models import load_model
+import gdown
+import os
+
+# URL de tu modelo en Google Drive
+# Reemplaza <FILE_ID> con el ID real de tu archivo .h5 en Drive
+MODEL_URL = "https://drive.google.com/uc?id=1DgwL8lcpei2P4O7Ztvy8iLbKvQ80oZey"
+MODEL_PATH = "skin_cancer_cnn.h5"
+
+# Función para cargar el modelo
+@st.cache_resource
+def load_cnn_model():
+    # Descargar el modelo si no existe localmente
+    if not os.path.exists(MODEL_PATH):
+        gdown.download(MODEL_URL, MODEL_PATH, quiet=False)
+    return load_model(MODEL_PATH)
+
+# Cargar el modelo
+model = load_cnn_model()
+
+# Función de predicción
+def predict_skin_cancer(uploaded_file, model):
+    img = Image.open(uploaded_file).convert("RGB")
+    img = img.resize((224, 224))
+
+    img_array = image.img_to_array(img) / 255.0
+    img_array = np.expand_dims(img_array, axis=0)
+
+    prediction = model.predict(img_array)[0][0]
+    class_label = "Maligne" if prediction > 0.5 else "Benigne"
+
+    return class_label, img
+
+# Interfaz de usuario
+st.title("Detector de Melanoma")
+
+st.markdown("""
+Aquest és un detector de càncer de pell.
+Adjunta una imatge i el model indicarà si el melanoma és benigne o maligne.
+""")
+
+uploaded_image = st.file_uploader(
+    "Escull una imatge...", type=["jpg", "jpeg", "png"]
+)
+
+if uploaded_image is not None:
+    class_label, img = predict_skin_cancer(uploaded_image, model)
+
+    st.image(img, caption="Imatge analitzada", width=400)
+    st.write(f"### Predicció: **{class_label}**")
+
+st.markdown("""
+### Informació sobre el model
+Aquest model utilitza xarxes neuronals convolucionals entrenades amb imatges mèdiques.
+No es garanteix una bona precisió amb fotografies fetes amb mòbil.
+""")
