@@ -1,6 +1,5 @@
 import streamlit as st
 import numpy as np
-import tensorflow
 from PIL import Image
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.models import load_model
@@ -60,3 +59,4 @@ Aquest model utilitza xarxes neuronals convolucionals entrenades amb imatges mè
 No es garanteix una bona precisió amb fotografies fetes amb mòbil.
 
 """)
+
