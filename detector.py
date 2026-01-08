@@ -1,5 +1,6 @@
 import streamlit as st
 import numpy as np
+import tensorflow
 from PIL import Image
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.models import load_model
@@ -57,4 +58,5 @@ st.markdown("""
 ### Informació sobre el model
 Aquest model utilitza xarxes neuronals convolucionals entrenades amb imatges mèdiques.
 No es garanteix una bona precisió amb fotografies fetes amb mòbil.
+
 """)
